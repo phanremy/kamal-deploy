@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+
+require 'thor'
+require 'io/console'
+
+# VaultWarden
+#    |
+#   TPK [Collection]
+#    |
+#
+
+# TODO: Use ERB in config/deploy/hetzner/install.conf for HOSTNAME
+
+# BW_URL=http://localhost:8080
+# BW_SESSION=$(cat ~/.config/tpk-cli/bw_session)
+
+ENV['THOR_SILENCE_DEPRECATION'] = 'true'
+
+class TPKCLI < Thor
+  class ServerCommand < Thor
+    desc 'rescue', 'reboots the server in rescue mode'
+    def rescue
+      # Ensure we are logged to the vault
+      # List the servers on Hetzner using Hetzner API credentials from the Vault
+      # Use the server named after the hostname provided in host parameter
+      puts "Resetting the server"
+    end
+
+    desc 'reset', 'resets a server'
+    def reset
+      # Enable the rescue mode on Hetzner
+      # Reset the Host Key (using ssh-keygen -R)
+      # Attempts to log in SSH
+    end
+  end
+
+  desc "server", 'xxx'
+  subcommand 'server', ServerCommand
+
+  desc "login", 'login to TPK CLI (use automatically when not logged)'
+  def login
+    print "Email address: "
+    email = STDIN.gets.chomp
+    print "Master password: [hidden]"
+    password = STDIN.noecho(&:gets).chomp
+    puts
+    bw_session=`bw login #{email} #{password} --raw`
+    puts bw_session
+  end
+
+  desc "unlock", 'Unlock (should be used automatically when session key is not available or not working)'
+  def unlock
+    print "Master password: [hidden]"
+    password = STDIN.noecho(&:gets).chomp
+    puts
+    bw_session=`bw unlock #{password} --raw`
+    puts bw_session
+  end
+end
+
+TPKCLI.start
