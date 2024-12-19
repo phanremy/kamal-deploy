@@ -8,7 +8,7 @@ services:
       REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
     volumes:
       # Mount the password file
-      - ./registry/registry.password:/auth/registry.password
+      - ./registry/auth:/auth
       # Mount the data directory
       - ./registry/data:/data
     ports:
